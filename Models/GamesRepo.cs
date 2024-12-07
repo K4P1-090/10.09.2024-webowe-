@@ -47,5 +47,43 @@ public class GamesRepo
         conn.Close();
         return gamesCountByYear;
     }
+    public void AddGame(Game game)
+    {
+        using SqliteConnection conn = new SqliteConnection(connString);
+        SqliteCommand cmd = conn.CreateCommand();
+        // cmd.CommandText = "INSERT INTO books (title, author, price) VALUES "+
+        // $" ('{book.Title}', '{book.Author}', {book.Price?.ToString(CultureInfo.InvariantCulture)})";
+        cmd.CommandText = "INSERT INTO Games (title, cathegory,year, price) VALUES (@title, @cathegory,@year, @price)";
+        cmd.Parameters.AddWithValue("@title", game.Title);
+        cmd.Parameters.AddWithValue("@author", game.Cathegory);
+        cmd.Parameters.AddWithValue("@year", game.Year);
+        cmd.Parameters.AddWithValue("@price", game.Price);
+        conn.Open();
+        cmd.ExecuteNonQuery();
+        conn.Close();
+    }
+    public void DeleteGame(int id)
+    {
+        using SqliteConnection conn = new SqliteConnection(connString);
+        SqliteCommand cmd = conn.CreateCommand();
+        cmd.CommandText = $"DELETE FROM Games WHERE id = {id}";
+        conn.Open();
+        cmd.ExecuteNonQuery();
+        conn.Close();
+    }
+     public  void UpdateGame(Game toUpdate)
+    {
+        using SqliteConnection conn = new SqliteConnection(connString);
+        SqliteCommand cmd = conn.CreateCommand();
+        cmd.CommandText = "UPDATE books "+
+        " SET title = @title, cathegory = @cathegory, year=@year, price = @price WHERE id = @id";
+        cmd.Parameters.AddWithValue("@title", toUpdate.Title);//ustawienie parametru
+        cmd.Parameters.AddWithValue("@cathegory", toUpdate.Cathegory);//ustawienie parametru
+        cmd.Parameters.AddWithValue("@year", toUpdate.Year);//ustawienie parametru
+        cmd.Parameters.AddWithValue("@id", toUpdate.Id);
+        conn.Open();
+        cmd.ExecuteNonQuery();
+        conn.Close();
+    }
 }
 

@@ -44,11 +44,67 @@ public class HomeController : Controller
         ViewBag.GamesCountByYear = gamesCountByYear;
         return View(games);
     }
-
+    [HttpGet]
     public IActionResult AddNewGame()
     {
         return View();
     }
+    [HttpPost]
+        public IActionResult AddNewGame(Game game)
+        {
+            if(ModelState.IsValid){
+                _gamesRepo.AddGame(game);
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+    [HttpGet]
+        public IActionResult UpdateGame(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+            var game = _gamesRepo.GetGames().FirstOrDefault(b => b.Id == id);
+            return View(game);
+        }
+        [HttpPost]
+        public IActionResult UpdateGame(Game game)
+        {
+            if (ModelState.IsValid)
+            {
+                var toUpdate = _gamesRepo.GetGames().FirstOrDefault(b => b.Id == game.Id);
+                if(toUpdate == null)
+                {
+                    return RedirectToAction("Index");
+                }
+                toUpdate.Title = game.Title ;
+                toUpdate.Cathegory = game.Cathegory;
+                toUpdate.Year=game.Year;
+                toUpdate.Price = game.Price;
+                _gamesRepo.UpdateGame(toUpdate);
+                return RedirectToAction("Index");
+            }
+            return View(game);
+        }
+    public IActionResult DeleteGame(int id)
+        {
+            _gamesRepo.DeleteGame(id);
+            return RedirectToAction("Index");
+        }    
+    public IActionResult OrderedBoks(string? sort)
+        {
+            List<Game> games;
+            if (sort == "asc")
+            {
+                games = _gamesRepo.GetGames().OrderBy(x => x.Title).ToList();
+            }
+            else
+            {
+                games = _gamesRepo.GetGames().OrderByDescending(x => x.Title).ToList();
+            }
 
-    
+            ViewBag.Sort = sort == "asc" ? "desc" : "asc";
+            return View("Index", games);
+        }    
 }

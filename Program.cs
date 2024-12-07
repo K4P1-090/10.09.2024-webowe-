@@ -1,3 +1,5 @@
+using _10._09._2024_webowe_.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
